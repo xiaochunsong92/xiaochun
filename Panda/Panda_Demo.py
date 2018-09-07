@@ -1,5 +1,12 @@
 #!/usr/bin/env python 
 # -*- coding: UTF-8 -*- 
+#---------------------------------------
+# Project Name: Panda 
+# Version:      Demo 
+# Date:         2018/9/7
+# Author:       SongXiaochun 
+# Contact:      xiaochunsong92@163.com 
+#---------------------------------------
 import xlrd 
 import re 
 A_data = 'A_data.xls'
@@ -94,8 +101,8 @@ def read_A_data(A_file):
     return A_dict 
 
 def select_S_to_show():
-    S_choosed = input("Please choose a Stock you intersted:")
-    print('S_choosed is ', S_choosed)
+    #S_choosed = input("Please choose a Stock you intersted:")
+    #print('S_choosed is ', S_choosed)
     return 
 
 if __name__=='__main__':
