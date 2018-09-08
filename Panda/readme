@@ -1,10 +1,11 @@
 How to use Panda?
 --Just run Panda_Demo.py 
---Input Example:S1 (To be done)  
+--Input Example:S1  
 Show what?
 --There are 3 excel for example:
 	--S is stock name and value
 	--B is fund B name and stock belonged
 	--A is fund A name and B&stock belonged 
 --This program aims to auto-calculate the A value and B value according to S value
+--Select Stock you intersted, and then it shall give you the related Fund B&A and Related Value
 
