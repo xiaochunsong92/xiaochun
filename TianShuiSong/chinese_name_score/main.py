@@ -10,6 +10,8 @@
 #---------------------------------------------------------
 import re
 import sxtwl 
+import requests
+from bs4 import BeautifulSoup
 lunar = sxtwl.Lunar()
 WX = {'木': 0, '火': 0, '土': 0, '金': 0, '水': 0}
 Gan = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -65,12 +67,34 @@ def analyze():
             WX['金'] += 1
         if x == "壬" or x == "癸" or x == "亥" or x == "子":
             WX['水'] += 1
+    # Analyze name wuxing according to Kangxizidian 
+    keywords = {'wd':last_name}
+    keywords1 = {'wd':first_name}
+    url = 'http://tool.httpcn.com/KangXi/So.asp'
+    r = requests.post(url, data = keywords)
+    r.endcoding = 'utf-8'
+    r1 = requests.post(url, data = keywords1)
+    r1.endcoding = 'utf-8'
+    kangxi_result = r.content.decode(r.endcoding)
+    kangxi_result1 = r1.content.decode(r1.endcoding)
+    soup = BeautifulSoup(kangxi_result, "html.parser")
+    soup1 = BeautifulSoup(kangxi_result1, "html.parser")
+    #print (soup.find(string=re.compile(u"汉字五行：")))
+    kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
+    kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
+    if kangxi_wx:
+        kangxi_wx = kangxi_wx.group(1)
+    kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
+    kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
+    if kangxi_wx1:
+        kangxi_wx1 = kangxi_wx1.group(1)
     print('吕十大师五行八字分析')
     print('您的名字: %s %s' %(last_name, first_name))
     print('您的阳历生日: %s' %birthday) 
     print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
     print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
-    print('您的五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+    print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+    print('您的名字五行: %s: %s %s: %s' %(last_name, kangxi_wx, first_name, kangxi_wx1))
 
 if __name__=='__main__':
     print('天水讼姓名测试系统')
