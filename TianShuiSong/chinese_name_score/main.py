@@ -11,7 +11,9 @@
 import re
 import sxtwl 
 import requests
+import time 
 from bs4 import BeautifulSoup
+Detail = 0
 lunar = sxtwl.Lunar()
 WX = {'木': 0, '火': 0, '土': 0, '金': 0, '水': 0}
 Gan = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -22,7 +24,9 @@ rmc = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "�
 
 def analyze():
     bazi = []
+    shuge_tongji = []
     B = re.match(r'(\d\d\d\d)(\d)(\d)(\d)(\d)(\d)(\d)',birthday)
+    total_score = 100
     if B:
         Y = B.group(1)
         if B.group(2) == '0':
@@ -37,6 +41,7 @@ def analyze():
             H = B.group(7)
         else:
             H = B.group(6) + B.group(7)
+    age = int(current_year) - int(Y) 
     day = lunar.getDayBySolar(int(Y), int(M), int(D))
     gz = lunar.getShiGz(int(D), int(H))
     ytg = Gan[day.Lyear2.tg]
@@ -104,16 +109,6 @@ def analyze():
     zongge = int(kangxi_bihua) + int(kangxi_bihua1)
     shugemingli = open('wugeshuli', 'r')
     shugemingli = shugemingli.readlines()
-    #for i in range(len(shugemingli)):
-    #    a = shugemingli[i]
-    #    tiange_jiedu = re.match(str(tiange) + '(\D.*)', a)
-    #    if tiange_jiedu:
-    #        tiange_jiedu = tiange_jiedu.group(1) 
-    #        print (tiange_jiedu)
-    #        print (shugemingli[i+1])
-    #        print (shugemingli[i+2])
-    #        print (shugemingli[i+3])
-    #        print (shugemingli[i+4])
     print('吕十大师五行八字分析')
     print('您的名字: %s %s' %(last_name, first_name))
     print('您的阳历生日: %s' %birthday) 
@@ -121,72 +116,133 @@ def analyze():
     print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
     print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
     print('您的名字五行: %s: %s %s: %s' %(last_name, kangxi_wx, first_name, kangxi_wx1))
+    print('您的名字五行分析:' )
+    for i in WX:
+        if (kangxi_wx == i) and (WX[i] == 0):
+            print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name, i))
+        elif (kangxi_wx == i) and (WX[i] == 1):
+            print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name, i))
+        elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+            print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name, i))
+    for i in WX:
+        if (kangxi_wx1 == i) and (WX[i] == 0):
+            print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name, i))
+        elif (kangxi_wx1 == i) and (WX[i] == 1):
+            print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name, i))
+        elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+            print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name, i))
+    for i in WX:
+        if (kangxi_wx == i):
+            WX[i] += 1 
+        if (kangxi_wx1 == i):
+            WX[i] += 1 
+    for i in WX:
+        if WX[i] == 0:
+            total_score -= 6
+        if WX[i] == 1:
+            total_score -= 3
     print('您的数格命理: %s: %s %s: %s %s: %s %s: %s %s: %s' %('天格', tiange, '地格', dige, '人格', renge, '外格', waige, '总格', zongge))
     print('您的数格命理分析:')
     print('天格:')
     for i in range(len(shugemingli)):
         a = shugemingli[i]
-        tiange_jiedu = re.match(str(tiange) + '(\D.*)', a)
+        tiange_jiedu = re.match(str(tiange) + '(\D)(.*)', a)
         if tiange_jiedu:
-            tiange_jiedu = tiange_jiedu.group(1) 
-            print (tiange_jiedu)
-            print (shugemingli[i+1],end="")
-            print (shugemingli[i+2],end="")
-            print (shugemingli[i+3],end="")
-            print (shugemingli[i+4],end="")
+            tiange_jiedu1 = tiange_jiedu.group(1) 
+            tiange_jiedu2 = tiange_jiedu.group(2) 
+            shuge_tongji.append(tiange_jiedu2)
+            print (tiange_jiedu1 + tiange_jiedu2)
+            if Detail:
+                #print (tiange_jiedu1 + tiange_jiedu2)
+                print (shugemingli[i+1],end="")
+                print (shugemingli[i+2],end="")
+                print (shugemingli[i+3],end="")
+                print (shugemingli[i+4],end="")
+
     print('地格:')
     for i in range(len(shugemingli)):
         a = shugemingli[i]
-        dige_jiedu = re.match(str(dige) + '(\D.*)', a)
+        dige_jiedu = re.match(str(dige) + '(\D)(.*)', a)
         if dige_jiedu:
-            dige_jiedu = dige_jiedu.group(1) 
-            print (dige_jiedu)
-            print (shugemingli[i+1],end="")
-            print (shugemingli[i+2],end="")
-            print (shugemingli[i+3],end="")
-            print (shugemingli[i+4],end="")
+            dige_jiedu1 = dige_jiedu.group(1) 
+            dige_jiedu2 = dige_jiedu.group(2) 
+            shuge_tongji.append(dige_jiedu2)
+            print (dige_jiedu1 + dige_jiedu2)
+            if Detail:
+                #print (dige_jiedu1 + dige_jiedu2)
+                print (shugemingli[i+1],end="")
+                print (shugemingli[i+2],end="")
+                print (shugemingli[i+3],end="")
+                print (shugemingli[i+4],end="")
     print('人格:')
     for i in range(len(shugemingli)):
         a = shugemingli[i]
-        renge_jiedu = re.match(str(renge) + '(\D.*)', a)
+        renge_jiedu = re.match(str(renge) + '(\D)(.*)', a)
         if renge_jiedu:
-            renge_jiedu = renge_jiedu.group(1) 
-            print (renge_jiedu)
-            print (shugemingli[i+1],end="")
-            print (shugemingli[i+2],end="")
-            print (shugemingli[i+3],end="")
-            print (shugemingli[i+4],end="")
+            renge_jiedu1 = renge_jiedu.group(1) 
+            renge_jiedu2 = renge_jiedu.group(2) 
+            shuge_tongji.append(renge_jiedu2)
+            print (renge_jiedu1 + renge_jiedu2)
+            if Detail:
+                #print (renge_jiedu1 + renge_jiedu2)
+                print (shugemingli[i+1],end="")
+                print (shugemingli[i+2],end="")
+                print (shugemingli[i+3],end="")
+                print (shugemingli[i+4],end="")
     print('外格:')
     for i in range(len(shugemingli)):
         a = shugemingli[i]
-        waige_jiedu = re.match(str(waige) + '(\D.*)', a)
+        waige_jiedu = re.match(str(waige) + '(\D)(.*)', a)
         if waige_jiedu:
-            waige_jiedu = waige_jiedu.group(1) 
-            print (waige_jiedu)
-            print (shugemingli[i+1],end="")
-            print (shugemingli[i+2],end="")
-            print (shugemingli[i+3],end="")
-            print (shugemingli[i+4],end="")
+            waige_jiedu1 = waige_jiedu.group(1) 
+            waige_jiedu2 = waige_jiedu.group(2) 
+            shuge_tongji.append(waige_jiedu2)
+            print (waige_jiedu1 + waige_jiedu2)
+            if Detail:
+                #print (waige_jiedu1 + waige_jiedu2)
+                print (shugemingli[i+1],end="")
+                print (shugemingli[i+2],end="")
+                print (shugemingli[i+3],end="")
+                print (shugemingli[i+4],end="")
     print('总格:')
     for i in range(len(shugemingli)):
         a = shugemingli[i]
-        zongge_jiedu = re.match(str(zongge) + '(\D.*)', a)
+        zongge_jiedu = re.match(str(zongge) + '(\D)(.*)', a)
         if zongge_jiedu:
-            zongge_jiedu = zongge_jiedu.group(1) 
-            print (zongge_jiedu)
-            print (shugemingli[i+1],end="")
-            print (shugemingli[i+2],end="")
-            print (shugemingli[i+3],end="")
-            print (shugemingli[i+4],end="")
-
+            zongge_jiedu1 = zongge_jiedu.group(1) 
+            zongge_jiedu2 = zongge_jiedu.group(2) 
+            shuge_tongji.append(zongge_jiedu2)
+            print (zongge_jiedu1 + zongge_jiedu2)
+            if Detail:
+                #print (zongge_jiedu1 + zongge_jiedu2)
+                print (shugemingli[i+1],end="")
+                print (shugemingli[i+2],end="")
+                print (shugemingli[i+3],end="")
+                print (shugemingli[i+4],end="")
+    # Calculate wugeshuli score
+    for i in range(len(shuge_tongji)):
+        if shuge_tongji[i] == '凶':
+            total_score -= 3
+        if shuge_tongji[i] == '半':
+            total_score -= 1
+    print('您的姓名最终得分:', total_score)
+    print('您的运势分析:')
+    if age < 100:
+        print('事业: 千里之行始于足下，您的事业还没有开始，脚踏实地的做好现在的每一件事，在%s年之后会有一次大运，把握好机会，可保10年基本面，是下一步提升阶级的重要基础。错过此次大运，只有除有贵人相助，否则难以追赶。' %str(19 - age))
+        print('财富: 小富之家，30岁之前衣食无忧，不用操心。30岁之后，如事业有成，可保中晚年平安。如事业五大的建树，家庭婚姻会出现2-3次危机，会有5年左右的波折期间，顺利趟过，可保晚年安详。生活中易多结交慷慨之士，乐善好施，积攒福保，方可免于常年劳逸奔波之苦。')
+        print('爱情: 真正的爱情还未到来，最多只是懵懂的初恋，请珍惜爱过的每一个人，虽然她不是和你享受走过一生的人，但是至少在最美的时候遇见你。')
+        print('子孙: 考虑子孙为时尚早，积累自身福报，子孙自然享福。')
+        print('官运: 如进入体制内需贵人相助，否则虽可保一世平安，但难有更大成就。在工作中需谨言慎行，大嘴巴会耽误你的升迁。 ')
 if __name__=='__main__':
     print('天水讼姓名测试系统')
     print('北京天水讼科技有限公司荣誉出品') 
     # Default setting
     last_name  = '王' 
     first_name = '木'
-    birthday   = '2018010102'
+    birthday   = '2011010102'
     sex        = '男'
+    current_time = time.strftime("%Y%m%d%H%M%S",time.localtime())
+    current_year = time.strftime("%Y",time.localtime())
     # Real test 
     #last_name  = input('您的姓:')
     #first_name = input('您的名:')
