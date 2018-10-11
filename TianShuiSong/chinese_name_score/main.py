@@ -14,6 +14,7 @@ import requests
 import time 
 from bs4 import BeautifulSoup
 Detail = 0
+test = 0
 lunar = sxtwl.Lunar()
 WX = {'木': 0, '火': 0, '土': 0, '金': 0, '水': 0}
 Gan = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -533,10 +534,17 @@ if __name__=='__main__':
     print('天水讼姓名测试系统')
     print('北京天水讼科技有限公司荣誉出品') 
     # Default setting
-    last_name  = '王科' 
-    first_name = '木讼'
-    birthday   = '2011010102'
-    sex        = '男'
+    if test == 1:
+        last_name  = '王科' 
+        first_name = '木讼'
+        birthday   = '2011010102'
+        sex        = '男'
+    #Real test 
+    if test == 0:
+        last_name  = input('您的姓:')
+        first_name = input('您的名:')
+        birthday   = input('您的生日:')
+        sex        = input('您是先生还是女士(男/女):')
     last_name_l = []
     first_name_l = []
     fuxing = 0
@@ -559,10 +567,5 @@ if __name__=='__main__':
         first_name_2 = first_name_l[1]
     if len(first_name) > 2:
         print("not support!")   
-    #Real test 
-    #last_name  = input('您的姓:')
-    #first_name = input('您的名:')
-    #birthday   = input('您的生日:')
-    #sex        = input('您是先生还是女士:')
     analyze()
 
