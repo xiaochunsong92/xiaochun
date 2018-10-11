@@ -73,74 +73,370 @@ def analyze():
         if x == "壬" or x == "癸" or x == "亥" or x == "子":
             WX['水'] += 1
     # Analyze name wuxing according to Kangxizidian 
-    keywords = {'wd':last_name}
-    keywords1 = {'wd':first_name}
-    url = 'http://tool.httpcn.com/KangXi/So.asp'
-    r = requests.post(url, data = keywords)
-    r.endcoding = 'utf-8'
-    r1 = requests.post(url, data = keywords1)
-    r1.endcoding = 'utf-8'
-    kangxi_result = r.content.decode(r.endcoding)
-    kangxi_result1 = r1.content.decode(r1.endcoding)
-    soup = BeautifulSoup(kangxi_result, "html.parser")
-    soup1 = BeautifulSoup(kangxi_result1, "html.parser")
-    #print (soup.find(string=re.compile(u"汉字五行：")))
-    kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
-    kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
-    kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
-    kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
-    if kangxi_wx:
-        kangxi_wx = kangxi_wx.group(1)
-    if kangxi_bihua:
-        kangxi_bihua = kangxi_bihua.group(1)
-    kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
-    kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
-    kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
-    kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
-    if kangxi_wx1:
-        kangxi_wx1 = kangxi_wx1.group(1)
-    if kangxi_bihua1:
-        kangxi_bihua1 = kangxi_bihua1.group(1)
-    # Calculate shuliwuge 
-    tiange = int(kangxi_bihua) + 1
-    dige = int(kangxi_bihua1) + 1 
-    renge = int(kangxi_bihua) + int(kangxi_bihua1)
-    waige = 2
-    zongge = int(kangxi_bihua) + int(kangxi_bihua1)
-    shugemingli = open('wugeshuli', 'r')
-    shugemingli = shugemingli.readlines()
-    print('吕十大师五行八字分析')
-    print('您的名字: %s %s' %(last_name, first_name))
-    print('您的阳历生日: %s' %birthday) 
-    print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
-    print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
-    print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
-    print('您的名字五行: %s: %s %s: %s' %(last_name, kangxi_wx, first_name, kangxi_wx1))
-    print('您的名字五行分析:' )
-    for i in WX:
-        if (kangxi_wx == i) and (WX[i] == 0):
-            print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name, i))
-        elif (kangxi_wx == i) and (WX[i] == 1):
-            print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name, i))
-        elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
-            print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name, i))
-    for i in WX:
-        if (kangxi_wx1 == i) and (WX[i] == 0):
-            print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name, i))
-        elif (kangxi_wx1 == i) and (WX[i] == 1):
-            print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name, i))
-        elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
-            print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name, i))
-    for i in WX:
-        if (kangxi_wx == i):
-            WX[i] += 1 
-        if (kangxi_wx1 == i):
-            WX[i] += 1 
-    for i in WX:
-        if WX[i] == 0:
-            total_score -= 6
-        if WX[i] == 1:
-            total_score -= 3
+    if fuxing == 0 and fuming == 0:
+        keywords = {'wd':last_name}
+        keywords1 = {'wd':first_name}
+        url = 'http://tool.httpcn.com/KangXi/So.asp'
+        r = requests.post(url, data = keywords)
+        r.endcoding = 'utf-8'
+        r1 = requests.post(url, data = keywords1)
+        r1.endcoding = 'utf-8'
+        kangxi_result = r.content.decode(r.endcoding)
+        kangxi_result1 = r1.content.decode(r1.endcoding)
+        soup = BeautifulSoup(kangxi_result, "html.parser")
+        soup1 = BeautifulSoup(kangxi_result1, "html.parser")
+        #print (soup.find(string=re.compile(u"汉字五行：")))
+        kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        if kangxi_wx:
+            kangxi_wx = kangxi_wx.group(1)
+        if kangxi_bihua:
+            kangxi_bihua = kangxi_bihua.group(1)
+        kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        if kangxi_wx1:
+            kangxi_wx1 = kangxi_wx1.group(1)
+        if kangxi_bihua1:
+            kangxi_bihua1 = kangxi_bihua1.group(1)
+        # Calculate shuliwuge 
+        tiange = int(kangxi_bihua) + 1
+        dige = int(kangxi_bihua1) + 1 
+        renge = int(kangxi_bihua) + int(kangxi_bihua1)
+        waige = 2
+        zongge = int(kangxi_bihua) + int(kangxi_bihua1)
+        shugemingli = open('wugeshuli', 'r')
+        shugemingli = shugemingli.readlines()
+        print('吕十大师五行八字分析')
+        print('您的名字: %s %s' %(last_name, first_name))
+        print('您的阳历生日: %s' %birthday) 
+        print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
+        print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
+        print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+        print('您的名字五行: %s: %s %s: %s' %(last_name, kangxi_wx, first_name, kangxi_wx1))
+        print('您的名字五行分析:' )
+        for i in WX:
+            if (kangxi_wx == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name, i))
+            elif (kangxi_wx == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name, i))
+            elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name, i))
+        for i in WX:
+            if (kangxi_wx1 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name, i))
+            elif (kangxi_wx1 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name, i))
+            elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name, i))
+        for i in WX:
+            if (kangxi_wx == i):
+                WX[i] += 1 
+            if (kangxi_wx1 == i):
+                WX[i] += 1 
+        for i in WX:
+            if WX[i] == 0:
+                total_score -= 6
+            if WX[i] == 1:
+                total_score -= 3
+    if fuxing == 1 and fuming == 0:
+        keywords = {'wd':last_name_1}
+        keywords0 = {'wd':last_name_2}
+        keywords1 = {'wd':first_name}
+        url = 'http://tool.httpcn.com/KangXi/So.asp'
+        r = requests.post(url, data = keywords)
+        r.endcoding = 'utf-8'
+        r0 = requests.post(url, data = keywords0)
+        r0.endcoding = 'utf-8'
+        r1 = requests.post(url, data = keywords1)
+        r1.endcoding = 'utf-8'
+        kangxi_result = r.content.decode(r.endcoding)
+        kangxi_result0 = r0.content.decode(r0.endcoding)
+        kangxi_result1 = r1.content.decode(r1.endcoding)
+        soup = BeautifulSoup(kangxi_result, "html.parser")
+        soup0 = BeautifulSoup(kangxi_result0, "html.parser")
+        soup1 = BeautifulSoup(kangxi_result1, "html.parser")
+        #print (soup.find(string=re.compile(u"汉字五行：")))
+        kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        if kangxi_wx:
+            kangxi_wx = kangxi_wx.group(1)
+        if kangxi_bihua:
+            kangxi_bihua = kangxi_bihua.group(1)
+        kangxi_wx0 = soup0.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua0 = soup0.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx0 = re.match(u".*?汉字五行：(.)", kangxi_wx0)
+        kangxi_bihua0 = re.match(u".*?康熙笔画：(.)", kangxi_bihua0)
+        if kangxi_wx0:
+            kangxi_wx0 = kangxi_wx0.group(1)
+        if kangxi_bihua0:
+            kangxi_bihua0 = kangxi_bihua0.group(1)
+        kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        if kangxi_wx1:
+            kangxi_wx1 = kangxi_wx1.group(1)
+        if kangxi_bihua1:
+            kangxi_bihua1 = kangxi_bihua1.group(1)
+        # Calculate shuliwuge 
+        tiange = int(kangxi_bihua) + int(kangxi_bihua0)
+        dige = int(kangxi_bihua1) + 1 
+        renge = int(kangxi_bihua0) + int(kangxi_bihua1)
+        waige = int(kangxi_bihua) + 1
+        zongge = int(kangxi_bihua) + int(kangxi_bihua0) + int(kangxi_bihua1)
+        shugemingli = open('wugeshuli', 'r')
+        shugemingli = shugemingli.readlines()
+        print('吕十大师五行八字分析')
+        print('您的名字: %s %s' %(last_name, first_name))
+        print('您的阳历生日: %s' %birthday) 
+        print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
+        print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
+        print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+        print('您的名字五行: %s: %s %s: %s %s: %s' %(last_name_1, kangxi_wx, last_name_2, kangxi_wx0, first_name, kangxi_wx1))
+        print('您的名字五行分析:' )
+        for i in WX:
+            if (kangxi_wx == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name_1, i))
+            elif (kangxi_wx == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name_1, i))
+            elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name_1, i))
+        for i in WX:
+            if (kangxi_wx0 == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name_2, i))
+            elif (kangxi_wx0 == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name_2, i))
+            elif (kangxi_wx0 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name_2, i))
+        for i in WX:
+            if (kangxi_wx1 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name, i))
+            elif (kangxi_wx1 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name, i))
+            elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name, i))
+        for i in WX:
+            if (kangxi_wx == i):
+                WX[i] += 1 
+            if (kangxi_wx0 == i):
+                WX[i] += 1 
+            if (kangxi_wx1 == i):
+                WX[i] += 1 
+        for i in WX:
+            if WX[i] == 0:
+                total_score -= 6
+            if WX[i] == 1:
+                total_score -= 3
+    if fuxing == 1 and fuming == 1:
+        keywords = {'wd':last_name_1}
+        keywords0 = {'wd':last_name_2}
+        keywords1 = {'wd':first_name_1}
+        keywords2 = {'wd':first_name_2}
+        url = 'http://tool.httpcn.com/KangXi/So.asp'
+        r = requests.post(url, data = keywords)
+        r.endcoding = 'utf-8'
+        r0 = requests.post(url, data = keywords0)
+        r0.endcoding = 'utf-8'
+        r1 = requests.post(url, data = keywords1)
+        r1.endcoding = 'utf-8'
+        r2 = requests.post(url, data = keywords2)
+        r2.endcoding = 'utf-8'
+        kangxi_result = r.content.decode(r.endcoding)
+        kangxi_result0 = r0.content.decode(r0.endcoding)
+        kangxi_result1 = r1.content.decode(r1.endcoding)
+        kangxi_result2 = r2.content.decode(r1.endcoding)
+        soup = BeautifulSoup(kangxi_result, "html.parser")
+        soup0 = BeautifulSoup(kangxi_result0, "html.parser")
+        soup1 = BeautifulSoup(kangxi_result1, "html.parser")
+        soup2 = BeautifulSoup(kangxi_result2, "html.parser")
+        #print (soup.find(string=re.compile(u"汉字五行：")))
+        kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        if kangxi_wx:
+            kangxi_wx = kangxi_wx.group(1)
+        if kangxi_bihua:
+            kangxi_bihua = kangxi_bihua.group(1)
+        kangxi_wx0 = soup0.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua0 = soup0.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx0 = re.match(u".*?汉字五行：(.)", kangxi_wx0)
+        kangxi_bihua0 = re.match(u".*?康熙笔画：(.)", kangxi_bihua0)
+        if kangxi_wx0:
+            kangxi_wx0 = kangxi_wx0.group(1)
+        if kangxi_bihua0:
+            kangxi_bihua0 = kangxi_bihua0.group(1)
+        kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        if kangxi_wx1:
+            kangxi_wx1 = kangxi_wx1.group(1)
+        if kangxi_bihua1:
+            kangxi_bihua1 = kangxi_bihua1.group(1)
+        kangxi_wx2 = soup2.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua2 = soup2.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx2 = re.match(u".*?汉字五行：(.)", kangxi_wx2)
+        kangxi_bihua2 = re.match(u".*?康熙笔画：(.)", kangxi_bihua2)
+        if kangxi_wx2:
+            kangxi_wx2 = kangxi_wx2.group(1)
+        if kangxi_bihua2:
+            kangxi_bihua2 = kangxi_bihua2.group(1)
+        # Calculate shuliwuge 
+        tiange = int(kangxi_bihua) + int(kangxi_bihua0)
+        dige = int(kangxi_bihua1) + int(kangxi_bihua2) 
+        renge = int(kangxi_bihua0) + int(kangxi_bihua1)
+        waige = int(kangxi_bihua) + int(kangxi_bihua2)
+        zongge = int(kangxi_bihua) + int(kangxi_bihua0) + int(kangxi_bihua1) + int(kangxi_bihua2)
+        shugemingli = open('wugeshuli', 'r')
+        shugemingli = shugemingli.readlines()
+        print('吕十大师五行八字分析')
+        print('您的名字: %s %s' %(last_name, first_name))
+        print('您的阳历生日: %s' %birthday) 
+        print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
+        print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
+        print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+        print('您的名字五行: %s: %s %s: %s %s: %s %s: %s' %(last_name_1, kangxi_wx, last_name_2, kangxi_wx0, first_name_1, kangxi_wx1, first_name_2, kangxi_wx2))
+        print('您的名字五行分析:' )
+        for i in WX:
+            if (kangxi_wx == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name_1, i))
+            elif (kangxi_wx == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name_1, i))
+            elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name_1, i))
+        for i in WX:
+            if (kangxi_wx0 == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name_2, i))
+            elif (kangxi_wx0 == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name_2, i))
+            elif (kangxi_wx0 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name_2, i))
+        for i in WX:
+            if (kangxi_wx1 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name_1, i))
+            elif (kangxi_wx1 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name_1, i))
+            elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name_1, i))
+        for i in WX:
+            if (kangxi_wx2 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name_2, i))
+            elif (kangxi_wx2 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name_2, i))
+            elif (kangxi_wx2 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name_2, i))
+        for i in WX:
+            if (kangxi_wx == i):
+                WX[i] += 1 
+            if (kangxi_wx0 == i):
+                WX[i] += 1 
+            if (kangxi_wx1 == i):
+                WX[i] += 1 
+            if (kangxi_wx2 == i):
+                WX[i] += 1 
+        for i in WX:
+            if WX[i] == 0:
+                total_score -= 6
+            if WX[i] == 1:
+                total_score -= 3
+    if fuxing == 0 and fuming == 1:
+        keywords = {'wd':last_name}
+        keywords1 = {'wd':first_name_1}
+        keywords2 = {'wd':first_name_2}
+        url = 'http://tool.httpcn.com/KangXi/So.asp'
+        r = requests.post(url, data = keywords)
+        r.endcoding = 'utf-8'
+        r1 = requests.post(url, data = keywords1)
+        r1.endcoding = 'utf-8'
+        r2 = requests.post(url, data = keywords2)
+        r2.endcoding = 'utf-8'
+        kangxi_result = r.content.decode(r.endcoding)
+        kangxi_result1 = r1.content.decode(r1.endcoding)
+        kangxi_result2 = r2.content.decode(r1.endcoding)
+        soup = BeautifulSoup(kangxi_result, "html.parser")
+        soup1 = BeautifulSoup(kangxi_result1, "html.parser")
+        soup2 = BeautifulSoup(kangxi_result2, "html.parser")
+        #print (soup.find(string=re.compile(u"汉字五行：")))
+        kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        if kangxi_wx:
+            kangxi_wx = kangxi_wx.group(1)
+        if kangxi_bihua:
+            kangxi_bihua = kangxi_bihua.group(1)
+        kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        if kangxi_wx1:
+            kangxi_wx1 = kangxi_wx1.group(1)
+        if kangxi_bihua1:
+            kangxi_bihua1 = kangxi_bihua1.group(1)
+        kangxi_wx2 = soup2.find(string=re.compile(u"汉字五行："))
+        kangxi_bihua2 = soup2.find(string=re.compile(u"康熙笔画："))
+        kangxi_wx2 = re.match(u".*?汉字五行：(.)", kangxi_wx2)
+        kangxi_bihua2 = re.match(u".*?康熙笔画：(.)", kangxi_bihua2)
+        if kangxi_wx2:
+            kangxi_wx2 = kangxi_wx2.group(1)
+        if kangxi_bihua2:
+            kangxi_bihua2 = kangxi_bihua2.group(1)
+        # Calculate shuliwuge 
+        tiange = int(kangxi_bihua) + 1
+        dige = int(kangxi_bihua1) + int(kangxi_bihua2) 
+        renge = int(kangxi_bihua) + int(kangxi_bihua1)
+        waige = int(kangxi_bihua2) + 1
+        zongge = int(kangxi_bihua) + int(kangxi_bihua1) + int(kangxi_bihua2)
+        shugemingli = open('wugeshuli', 'r')
+        shugemingli = shugemingli.readlines()
+        print('吕十大师五行八字分析')
+        print('您的名字: %s %s' %(last_name, first_name))
+        print('您的阳历生日: %s' %birthday) 
+        print('您的农历生日: %s %s' %(ymc[day.Lmc],rmc[day.Ldi]))
+        print('您的生辰八字: %s %s %s %s %s %s %s %s' %(Gan[day.Lyear2.tg], Zhi[day.Lyear2.dz], Gan[day.Lmonth2.tg], Zhi[day.Lmonth2.dz], Gan[day.Lday2.tg], Zhi[day.Lday2.dz], Gan[gz.tg], Zhi[gz.dz]))
+        print('您的生辰五行: 金 %s 木 %s 水 %s 火 %s 土 %s' %(WX['金'], WX['木'], WX['水'], WX['火'], WX['土']))
+        print('您的名字五行:  %s: %s %s: %s %s: %s' %(last_name, kangxi_wx, first_name_1, kangxi_wx1, first_name_2, kangxi_wx2))
+        print('您的名字五行分析:' )
+        for i in WX:
+            if (kangxi_wx == i) and (WX[i] == 0):
+                print('您的姓 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(last_name, i))
+            elif (kangxi_wx == i) and (WX[i] == 1):
+                print('您的姓 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(last_name, i))
+            elif (kangxi_wx == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的姓 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(last_name, i))
+        for i in WX:
+            if (kangxi_wx1 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name_1, i))
+            elif (kangxi_wx1 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name_1, i))
+            elif (kangxi_wx1 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name_1, i))
+        for i in WX:
+            if (kangxi_wx2 == i) and (WX[i] == 0):
+                print('您的名 "%s" 大吉，完美补充了您生辰八字里缺的 "%s" ' %(first_name_2, i))
+            elif (kangxi_wx2 == i) and (WX[i] == 1):
+                print('您的名 "%s" 中吉，您的生辰八字 "%s" 只有1需要补一补' %(first_name_2, i))
+            elif (kangxi_wx2 == i) and ((WX[i] == 2) or (WX[i] == 3) or (WX[i] == 4)):  
+                print('您的名 "%s" 小吉，您的生辰八字 "%s" 已经够了，不需要再补了。' %(first_name_2, i))
+        for i in WX:
+            if (kangxi_wx == i):
+                WX[i] += 1 
+            if (kangxi_wx1 == i):
+                WX[i] += 1 
+            if (kangxi_wx2 == i):
+                WX[i] += 1 
+        for i in WX:
+            if WX[i] == 0:
+                total_score -= 6
+            if WX[i] == 1:
+                total_score -= 3
     print('您的数格命理: %s: %s %s: %s %s: %s %s: %s %s: %s' %('天格', tiange, '地格', dige, '人格', renge, '外格', waige, '总格', zongge))
     print('您的数格命理分析:')
     print('天格:')
@@ -237,13 +533,33 @@ if __name__=='__main__':
     print('天水讼姓名测试系统')
     print('北京天水讼科技有限公司荣誉出品') 
     # Default setting
-    last_name  = '王' 
-    first_name = '木'
+    last_name  = '王科' 
+    first_name = '木讼'
     birthday   = '2011010102'
     sex        = '男'
+    last_name_l = []
+    first_name_l = []
+    fuxing = 0
+    fuming = 0
     current_time = time.strftime("%Y%m%d%H%M%S",time.localtime())
     current_year = time.strftime("%Y",time.localtime())
-    # Real test 
+    if len(last_name) == 2:
+        fuxing = 1 
+        for i in last_name:
+            last_name_l.append(i) 
+        last_name_1 =  last_name_l[0]
+        last_name_2 =  last_name_l[1]
+    if len(last_name) > 2:
+        print("not support!")   
+    if len(first_name) == 2:
+        fuming = 1 
+        for i in first_name:
+            first_name_l.append(i) 
+        first_name_1 = first_name_l[0]
+        first_name_2 = first_name_l[1]
+    if len(first_name) > 2:
+        print("not support!")   
+    #Real test 
     #last_name  = input('您的姓:')
     #first_name = input('您的名:')
     #birthday   = input('您的生日:')
