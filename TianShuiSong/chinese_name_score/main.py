@@ -182,7 +182,7 @@ def analyze():
         wuxing_power += ddz_is_mu*0.5
     if dtg_is_shui == 1 and mtg_is_jin == 1:
         wuxing_power += 1
-    print("wuxing power ", wuxing_power)
+    #print("wuxing power ", wuxing_power)
     # Analyze name wuxing according to Kangxizidian 
     if fuxing == 0 and fuming == 0:
         keywords = {'wd':last_name}
@@ -253,13 +253,13 @@ def analyze():
         deviation = deviation/5
         standard_deviation = math.sqrt(deviation)
         if (standard_deviation < 0.5):
-            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+            wuxing_balance = "非常平衡"
         if 1 > standard_deviation >= 0.5:
-            wuxing_balance = "还行哇，挺平衡的。"
+            wuxing_balance = "挺平衡的"
         if 1.5 > standard_deviation >= 1:
-            wuxing_balance = "不太平衡哦。"
+            wuxing_balance = "不太平衡"
         if standard_deviation >= 1.5:
-            wuxing_balance = "垃圾，太不平衡了。"
+            wuxing_balance = "太不平衡了"
         print('您的五行标准差: ', standard_deviation)
         print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
@@ -359,13 +359,13 @@ def analyze():
         deviation = deviation/5
         standard_deviation = math.sqrt(deviation)
         if (standard_deviation < 0.5):
-            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+            wuxing_balance = "非常平衡"
         if 1 > standard_deviation >= 0.5:
-            wuxing_balance = "还行哇，挺平衡的。"
+            wuxing_balance = "挺平衡的"
         if 1.5 > standard_deviation >= 1:
-            wuxing_balance = "不太平衡哦。"
+            wuxing_balance = "不太平衡"
         if standard_deviation >= 1.5:
-            wuxing_balance = "垃圾，太不平衡了。"
+            wuxing_balance = "太不平衡了"
         print('您的五行标准差: ', standard_deviation)
         print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
@@ -487,13 +487,13 @@ def analyze():
         deviation = deviation/5
         standard_deviation = math.sqrt(deviation)
         if (standard_deviation < 0.5):
-            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+            wuxing_balance = "非常平衡"
         if 1 > standard_deviation >= 0.5:
-            wuxing_balance = "还行哇，挺平衡的。"
+            wuxing_balance = "挺平衡的"
         if 1.5 > standard_deviation >= 1:
-            wuxing_balance = "不太平衡哦。"
+            wuxing_balance = "不太平衡"
         if standard_deviation >= 1.5:
-            wuxing_balance = "垃圾，太不平衡了。"
+            wuxing_balance = "不平衡"
         print('您的五行标准差: ', standard_deviation)
         print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
@@ -593,13 +593,13 @@ def analyze():
         deviation = deviation/5
         standard_deviation = math.sqrt(deviation)
         if (standard_deviation < 0.5):
-            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+            wuxing_balance = "非常平衡。"
         if 1 > standard_deviation >= 0.5:
-            wuxing_balance = "还行哇，挺平衡的。"
+            wuxing_balance = "挺平衡的。"
         if 1.5 > standard_deviation >= 1:
-            wuxing_balance = "不太平衡哦。"
+            wuxing_balance = "不太平衡"
         if standard_deviation >= 1.5:
-            wuxing_balance = "垃圾，太不平衡了。"
+            wuxing_balance = "不平衡"
         print('您的五行标准差: ', standard_deviation)
         print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
@@ -608,7 +608,12 @@ def analyze():
                 total_score -= 6
             if WX[i] == 1:
                 total_score -= 3
-        
+    if wuxing_power > 0:
+        print('五行属性强弱: 强')
+    if wuxing_power == 0:
+        print('五行属性强弱: 平衡')
+    if wuxing_power < 0:
+        print('五行属性强弱: 弱')
     print('您的数格命理: %s: %s %s: %s %s: %s %s: %s %s: %s' %('天格', tiange, '地格', dige, '人格', renge, '外格', waige, '总格', zongge))
     print('您的数格命理分析:')
     print('天格:')
