@@ -12,6 +12,7 @@ import re
 import sxtwl 
 import requests
 import time 
+import math
 from bs4 import BeautifulSoup
 Detail = 0
 test = 0
@@ -73,6 +74,115 @@ def analyze():
             WX['金'] += 1
         if x == "壬" or x == "癸" or x == "亥" or x == "子":
             WX['水'] += 1
+    dtg_is_mu = 0
+    dtg_is_huo = 0
+    dtg_is_tu = 0
+    dtg_is_jin = 0
+    dtg_is_shui = 0
+    ddz_is_mu = 0
+    ddz_is_huo = 0
+    ddz_is_tu = 0
+    ddz_is_jin = 0
+    ddz_is_shui = 0
+    mtg_is_mu = 0
+    mtg_is_huo = 0
+    mtg_is_tu = 0
+    mtg_is_jin = 0
+    mtg_is_shui = 0
+    ytg_is_mu = 0
+    ytg_is_huo = 0
+    ytg_is_tu = 0
+    ytg_is_jin = 0
+    ytg_is_shui = 0
+    ym_no_relation = 0
+    if ddz == "寅" or ddz == "卯":
+        ddz_is_mu = 1
+    if ddz == "巳" or ddz == "午":
+        ddz_is_huo = 1
+    if ddz == "辰" or ddz == "丑" or ddz == "戌" or ddz == "未":
+        ddz_is_tu = 1
+    if ddz == "申" or ddz == "酉":
+        ddz_is_jin = 1
+    if ddz == "亥" or ddz == "子":
+        ddz_is_shui = 1
+    if dtg == "甲" or dtg == "乙":
+        dtg_is_mu = 1
+    if dtg == "丁" or dtg == "丙":
+        dtg_is_huo = 1
+    if dtg == "戊" or dtg == "己":
+        dtg_is_tu = 1
+    if dtg == "庚" or dtg == "辛":
+        dtg_is_jin = 1
+    if dtg == "壬" or dtg == "癸":
+        dtg_is_shui = 1
+    if mtg == "甲" or mtg == "乙":
+        mtg_is_mu = 1
+    if mtg == "丁" or mtg == "丙":
+        mtg_is_huo = 1
+    if mtg == "戊" or mtg == "己":
+        mtg_is_tu = 1
+    if mtg == "庚" or mtg == "辛":
+        mtg_is_jin = 1
+    if mtg == "壬" or mtg == "癸":
+        mtg_is_shui = 1
+    if ytg == "甲" or ytg == "乙":
+        ytg_is_mu = 1
+    if ytg == "丁" or ytg == "丙":
+        ytg_is_huo = 1
+    if ytg == "戊" or ytg == "己":
+        ytg_is_tu = 1
+    if ytg == "庚" or ytg == "辛":
+        ytg_is_jin = 1
+    if ytg == "壬" or ytg == "癸":
+        ytg_is_shui = 1
+    if ytg_is_mu == 1 and mtg_is_huo == 0 and mtg_is_shui == 0:
+        ym_no_relation = 1
+    if ytg_is_huo == 1 and mtg_is_tu == 0 and mtg_is_mu == 0:
+        ym_no_relation = 1
+    if ytg_is_tu == 1 and mtg_is_jin == 0 and mtg_is_huo == 0:
+        ym_no_relation = 1
+    if ytg_is_jin == 1 and mtg_is_shui == 0 and mtg_is_tu == 0:
+        ym_no_relation = 1
+    if ytg_is_shui == 1 and mtg_is_mu == 0 and mtg_is_jin == 0:
+        ym_no_relation = 1
+
+    wuxing_power = 0
+    if dtg_is_mu == 1 and mtg_is_huo == 1:
+        wuxing_power -= 1
+        wuxing_power += WX['水']*0.2
+        wuxing_power += ym_no_relation*0.2
+        wuxing_power += ddz_is_mu*0.5
+    if dtg_is_mu == 1 and mtg_is_shui == 1:
+        wuxing_power += 1
+    if dtg_is_huo == 1 and mtg_is_tu == 1:
+        wuxing_power -= 1
+        wuxing_power += WX['木']*0.2  
+        wuxing_power += ym_no_relation*0.2
+        wuxing_power += ddz_is_mu*0.5
+    if dtg_is_huo == 1 and mtg_is_mu == 1:
+        wuxing_power += 1
+    if dtg_is_tu == 1 and mtg_is_jin == 1:
+        wuxing_power -= 1
+        wuxing_power += WX['火']*0.2  
+        wuxing_power += ym_no_relation*0.2
+        wuxing_power += ddz_is_mu*0.5
+    if dtg_is_tu == 1 and mtg_is_huo == 1:
+        wuxing_power += 1
+    if dtg_is_jin == 1 and mtg_is_shui == 1:
+        wuxing_power -= 1
+        wuxing_power += WX['土']*0.2  
+        wuxing_power += ym_no_relation*0.2
+        wuxing_power += ddz_is_mu*0.5
+    if dtg_is_jin == 1 and mtg_is_tu == 1:
+        wuxing_power += 1
+    if dtg_is_shui == 1 and mtg_is_mu == 1:
+        wuxing_power -= 1
+        wuxing_power += WX['金']*0.2  
+        wuxing_power += ym_no_relation*0.2
+        wuxing_power += ddz_is_mu*0.5
+    if dtg_is_shui == 1 and mtg_is_jin == 1:
+        wuxing_power += 1
+    print("wuxing power ", wuxing_power)
     # Analyze name wuxing according to Kangxizidian 
     if fuxing == 0 and fuming == 0:
         keywords = {'wd':last_name}
@@ -90,7 +200,7 @@ def analyze():
         kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
         kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
         kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
-        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua)
         if kangxi_wx:
             kangxi_wx = kangxi_wx.group(1)
         if kangxi_bihua:
@@ -98,7 +208,7 @@ def analyze():
         kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
         kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
         kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
-        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua1)
         if kangxi_wx1:
             kangxi_wx1 = kangxi_wx1.group(1)
         if kangxi_bihua1:
@@ -138,8 +248,23 @@ def analyze():
                 WX[i] += 1 
             if (kangxi_wx1 == i):
                 WX[i] += 1 
+        mean = (WX['木'] + WX['火'] + WX['土'] + WX['金'] + WX['水'])/5
+        deviation = (WX['木'] - mean)**2 + (WX['火'] - mean)**2 + (WX['土'] - mean)**2 + (WX['金'] - mean)**2 + (WX['水'] - mean)**2 
+        deviation = deviation/5
+        standard_deviation = math.sqrt(deviation)
+        if (standard_deviation < 0.5):
+            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+        if 1 > standard_deviation >= 0.5:
+            wuxing_balance = "还行哇，挺平衡的。"
+        if 1.5 > standard_deviation >= 1:
+            wuxing_balance = "不太平衡哦。"
+        if standard_deviation >= 1.5:
+            wuxing_balance = "垃圾，太不平衡了。"
+        print('您的五行标准差: ', standard_deviation)
+        print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
             if WX[i] == 0:
+                print('你五行中 "%s" 没有补上哦。' %(i))
                 total_score -= 6
             if WX[i] == 1:
                 total_score -= 3
@@ -164,7 +289,7 @@ def analyze():
         kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
         kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
         kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
-        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua)
         if kangxi_wx:
             kangxi_wx = kangxi_wx.group(1)
         if kangxi_bihua:
@@ -172,7 +297,7 @@ def analyze():
         kangxi_wx0 = soup0.find(string=re.compile(u"汉字五行："))
         kangxi_bihua0 = soup0.find(string=re.compile(u"康熙笔画："))
         kangxi_wx0 = re.match(u".*?汉字五行：(.)", kangxi_wx0)
-        kangxi_bihua0 = re.match(u".*?康熙笔画：(.)", kangxi_bihua0)
+        kangxi_bihua0 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua0)
         if kangxi_wx0:
             kangxi_wx0 = kangxi_wx0.group(1)
         if kangxi_bihua0:
@@ -180,7 +305,7 @@ def analyze():
         kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
         kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
         kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
-        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua1)
         if kangxi_wx1:
             kangxi_wx1 = kangxi_wx1.group(1)
         if kangxi_bihua1:
@@ -229,8 +354,23 @@ def analyze():
                 WX[i] += 1 
             if (kangxi_wx1 == i):
                 WX[i] += 1 
+        mean = (WX['木'] + WX['火'] + WX['土'] + WX['金'] + WX['水'])/5
+        deviation = (WX['木'] - mean)**2 + (WX['火'] - mean)**2 + (WX['土'] - mean)**2 + (WX['金'] - mean)**2 + (WX['水'] - mean)**2 
+        deviation = deviation/5
+        standard_deviation = math.sqrt(deviation)
+        if (standard_deviation < 0.5):
+            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+        if 1 > standard_deviation >= 0.5:
+            wuxing_balance = "还行哇，挺平衡的。"
+        if 1.5 > standard_deviation >= 1:
+            wuxing_balance = "不太平衡哦。"
+        if standard_deviation >= 1.5:
+            wuxing_balance = "垃圾，太不平衡了。"
+        print('您的五行标准差: ', standard_deviation)
+        print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
             if WX[i] == 0:
+                print('你五行中 "%s" 没有补上哦。' %(i))
                 total_score -= 6
             if WX[i] == 1:
                 total_score -= 3
@@ -260,7 +400,7 @@ def analyze():
         kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
         kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
         kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
-        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua)
         if kangxi_wx:
             kangxi_wx = kangxi_wx.group(1)
         if kangxi_bihua:
@@ -268,7 +408,7 @@ def analyze():
         kangxi_wx0 = soup0.find(string=re.compile(u"汉字五行："))
         kangxi_bihua0 = soup0.find(string=re.compile(u"康熙笔画："))
         kangxi_wx0 = re.match(u".*?汉字五行：(.)", kangxi_wx0)
-        kangxi_bihua0 = re.match(u".*?康熙笔画：(.)", kangxi_bihua0)
+        kangxi_bihua0 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua0)
         if kangxi_wx0:
             kangxi_wx0 = kangxi_wx0.group(1)
         if kangxi_bihua0:
@@ -276,7 +416,7 @@ def analyze():
         kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
         kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
         kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
-        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua1)
         if kangxi_wx1:
             kangxi_wx1 = kangxi_wx1.group(1)
         if kangxi_bihua1:
@@ -284,7 +424,7 @@ def analyze():
         kangxi_wx2 = soup2.find(string=re.compile(u"汉字五行："))
         kangxi_bihua2 = soup2.find(string=re.compile(u"康熙笔画："))
         kangxi_wx2 = re.match(u".*?汉字五行：(.)", kangxi_wx2)
-        kangxi_bihua2 = re.match(u".*?康熙笔画：(.)", kangxi_bihua2)
+        kangxi_bihua2 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua2)
         if kangxi_wx2:
             kangxi_wx2 = kangxi_wx2.group(1)
         if kangxi_bihua2:
@@ -342,8 +482,23 @@ def analyze():
                 WX[i] += 1 
             if (kangxi_wx2 == i):
                 WX[i] += 1 
+        mean = (WX['木'] + WX['火'] + WX['土'] + WX['金'] + WX['水'])/5
+        deviation = (WX['木'] - mean)**2 + (WX['火'] - mean)**2 + (WX['土'] - mean)**2 + (WX['金'] - mean)**2 + (WX['水'] - mean)**2 
+        deviation = deviation/5
+        standard_deviation = math.sqrt(deviation)
+        if (standard_deviation < 0.5):
+            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+        if 1 > standard_deviation >= 0.5:
+            wuxing_balance = "还行哇，挺平衡的。"
+        if 1.5 > standard_deviation >= 1:
+            wuxing_balance = "不太平衡哦。"
+        if standard_deviation >= 1.5:
+            wuxing_balance = "垃圾，太不平衡了。"
+        print('您的五行标准差: ', standard_deviation)
+        print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
             if WX[i] == 0:
+                print('你五行中 "%s" 没有补上哦。' %(i))
                 total_score -= 6
             if WX[i] == 1:
                 total_score -= 3
@@ -360,7 +515,7 @@ def analyze():
         r2.endcoding = 'utf-8'
         kangxi_result = r.content.decode(r.endcoding)
         kangxi_result1 = r1.content.decode(r1.endcoding)
-        kangxi_result2 = r2.content.decode(r1.endcoding)
+        kangxi_result2 = r2.content.decode(r2.endcoding)
         soup = BeautifulSoup(kangxi_result, "html.parser")
         soup1 = BeautifulSoup(kangxi_result1, "html.parser")
         soup2 = BeautifulSoup(kangxi_result2, "html.parser")
@@ -368,7 +523,7 @@ def analyze():
         kangxi_wx = soup.find(string=re.compile(u"汉字五行："))
         kangxi_bihua = soup.find(string=re.compile(u"康熙笔画："))
         kangxi_wx = re.match(u".*?汉字五行：(.)", kangxi_wx)
-        kangxi_bihua = re.match(u".*?康熙笔画：(.)", kangxi_bihua)
+        kangxi_bihua = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua)
         if kangxi_wx:
             kangxi_wx = kangxi_wx.group(1)
         if kangxi_bihua:
@@ -376,7 +531,7 @@ def analyze():
         kangxi_wx1 = soup1.find(string=re.compile(u"汉字五行："))
         kangxi_bihua1 = soup1.find(string=re.compile(u"康熙笔画："))
         kangxi_wx1 = re.match(u".*?汉字五行：(.)", kangxi_wx1)
-        kangxi_bihua1 = re.match(u".*?康熙笔画：(.)", kangxi_bihua1)
+        kangxi_bihua1 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua1)
         if kangxi_wx1:
             kangxi_wx1 = kangxi_wx1.group(1)
         if kangxi_bihua1:
@@ -384,7 +539,7 @@ def analyze():
         kangxi_wx2 = soup2.find(string=re.compile(u"汉字五行："))
         kangxi_bihua2 = soup2.find(string=re.compile(u"康熙笔画："))
         kangxi_wx2 = re.match(u".*?汉字五行：(.)", kangxi_wx2)
-        kangxi_bihua2 = re.match(u".*?康熙笔画：(.)", kangxi_bihua2)
+        kangxi_bihua2 = re.match(u".*?康熙笔画：(.*)；", kangxi_bihua2)
         if kangxi_wx2:
             kangxi_wx2 = kangxi_wx2.group(1)
         if kangxi_bihua2:
@@ -433,11 +588,27 @@ def analyze():
                 WX[i] += 1 
             if (kangxi_wx2 == i):
                 WX[i] += 1 
+        mean = (WX['木'] + WX['火'] + WX['土'] + WX['金'] + WX['水'])/5
+        deviation = (WX['木'] - mean)**2 + (WX['火'] - mean)**2 + (WX['土'] - mean)**2 + (WX['金'] - mean)**2 + (WX['水'] - mean)**2 
+        deviation = deviation/5
+        standard_deviation = math.sqrt(deviation)
+        if (standard_deviation < 0.5):
+            wuxing_balance = "可以说是非常牛逼，非常平衡。"
+        if 1 > standard_deviation >= 0.5:
+            wuxing_balance = "还行哇，挺平衡的。"
+        if 1.5 > standard_deviation >= 1:
+            wuxing_balance = "不太平衡哦。"
+        if standard_deviation >= 1.5:
+            wuxing_balance = "垃圾，太不平衡了。"
+        print('您的五行标准差: ', standard_deviation)
+        print('您的五行平衡程度："%s"' %(wuxing_balance))
         for i in WX:
             if WX[i] == 0:
+                print('你五行中 "%s" 没有补上哦。' %(i))
                 total_score -= 6
             if WX[i] == 1:
                 total_score -= 3
+        
     print('您的数格命理: %s: %s %s: %s %s: %s %s: %s %s: %s' %('天格', tiange, '地格', dige, '人格', renge, '外格', waige, '总格', zongge))
     print('您的数格命理分析:')
     print('天格:')
